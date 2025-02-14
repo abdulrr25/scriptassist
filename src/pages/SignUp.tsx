@@ -1,33 +1,31 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { authenticateUser } from "../auth/auth";
-import { TextInput, Button, Card, Title, Alert, Text, Container, PasswordInput } from "@mantine/core";
+import { signUpUser } from "../auth/auth";
+import { TextInput, Button, Card, Title, Alert, Container, PasswordInput } from "@mantine/core";
 
-const LoginPage: React.FC = () => {
+const SignUp: React.FC = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const handleLogin = () => {
+  const handleSignUp = () => {
     setError(null); // Clear previous errors
 
     if (!username.trim() || !password.trim()) {
-      setError("Both fields are required.");
+      setError("All fields are required.");
       return;
     }
 
-    if (authenticateUser(username, password)) {
-      localStorage.setItem("loggedInUser", username);
-      navigate("/resources");
-    } else {
-      const storedUser = localStorage.getItem("user");
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters long.");
+      return;
+    }
 
-      if (!storedUser) {
-        setError("User does not exist. ");
-      } else {
-        setError("Incorrect password.");
-      }
+    if (signUpUser(username, password)) {
+      navigate("/login");
+    } else {
+      setError("User already exists. Try logging in.");
     }
   };
 
@@ -35,7 +33,7 @@ const LoginPage: React.FC = () => {
     <Container size={420} style={{ marginTop: "5rem" }}>
       <Card shadow="sm" padding="lg" radius="md">
         <Title order={2} align="center" style={{ marginBottom: "1rem" }}>
-          Login
+          Create an Account
         </Title>
 
         {error && <Alert color="red" style={{ marginBottom: "1rem" }}>{error}</Alert>}
@@ -57,16 +55,16 @@ const LoginPage: React.FC = () => {
           mt="sm"
         />
 
-        <Button onClick={handleLogin} fullWidth mt="md">
-          Login
+        <Button onClick={handleSignUp} fullWidth mt="md">
+          Sign Up
         </Button>
 
-        <Text align="center" mt="sm">
-          Don't have an account? <Link to="/signup">Sign Up</Link>
-        </Text>
+        <Title order={6} align="center" mt="md">
+          Already have an account? <Link to="/login">Login here</Link>
+        </Title>
       </Card>
     </Container>
   );
 };
 
-export default LoginPage;
+export default SignUp;

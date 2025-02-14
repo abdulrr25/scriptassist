@@ -1,84 +1,37 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { Table, Loader, TextInput, Center, Alert, Button } from "@mantine/core";
+import { useEffect, useState } from "react";
+import { Card, Grid, Title, Text } from "@mantine/core";
 import { Link } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
-
-const fetchResources = async ({ pageParam = "https://swapi.dev/api/people/" }) => {
-  try {
-    const { data } = await axios.get(pageParam);
-    return { results: data.results, nextPage: data.next || undefined };
-  } catch (error) {
-    throw new Error("Failed to fetch data. Please try again later.");
-  }
-};
+import { motion } from "framer-motion";
 
 const ResourceListPage: React.FC = () => {
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error, refetch } = useInfiniteQuery({
-    queryKey: ["resources"],
-    queryFn: fetchResources,
-    getNextPageParam: (lastPage) => lastPage.nextPage,
-    retry: 2, // Retry fetching data twice before throwing an error
-  });
-
-  const [search, setSearch] = useState("");
-  const observerRef = useRef<HTMLDivElement | null>(null);
+  const [resources, setResources] = useState<any[]>([]);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage) fetchNextPage();
-      },
-      { threshold: 1.0 }
-    );
-    if (observerRef.current) observer.observe(observerRef.current);
-    return () => observer.disconnect();
-  }, [fetchNextPage, hasNextPage]);
+    fetch("https://swapi.dev/api/people/")
+      .then((res) => res.json())
+      .then((data) => setResources(data.results))
+      .catch((error) => console.error("Error fetching data:", error));
+  }, []);
 
   return (
-    <Center style={{ flexDirection: "column", padding: "1rem" }}>
-      <TextInput
-        placeholder="Search by name..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        style={{ maxWidth: "400px", marginBottom: "1rem" }}
-      />
-
-      
-
-      <Table highlightOnHover striped withBorder withColumnBorders>
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Birth Year</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data?.pages
-            .flatMap((page) => page.results)
-            .filter((char) => char.name.toLowerCase().includes(search.toLowerCase()))
-            .map((character, index) => (
-              <tr key={index}>
-                <td>
-                  <Link to={`/resource/${character.url.split("/").slice(-2, -1)[0]}`}>
-                    {character.name}
-                  </Link>
-                </td>
-                <td>{character.birth_year}</td>
-              </tr>
-            ))}
-        </tbody>
-      </Table>
-
-      {isFetchingNextPage && <Loader color="blue" mt="md" />}
-      <div ref={observerRef}></div>
-
-      {hasNextPage && (
-        <Button onClick={() => fetchNextPage()} mt="md" disabled={isFetchingNextPage}>
-          Load More
-        </Button>
-      )}
-    </Center>
+    <div style={{ padding: "2rem" }}>
+      <Title order={2} align="center" mb="lg">Star Wars Characters</Title>
+      <Grid>
+        {resources.slice(0, 10).map((character, index) => (
+          <Grid.Col key={index} span={4}>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Link to={`/resource/${index + 1}`} style={{ textDecoration: "none" }}>
+                <Card shadow="md" padding="lg">
+                  <Text weight={500}>{character.name}</Text>
+                  <Text size="sm" color="gray">Height: {character.height}cm</Text>
+                  <Text size="sm" color="gray">Mass: {character.mass}kg</Text>
+                </Card>
+              </Link>
+            </motion.div>
+          </Grid.Col>
+        ))}
+      </Grid>
+    </div>
   );
 };
 

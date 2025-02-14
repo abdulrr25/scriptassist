@@ -1,46 +1,71 @@
-import { useNavigate } from "react-router-dom";
-import { Button, Container, Flex, Text } from "@mantine/core";
-import { isAuthenticated, logoutUser, getCurrentUser } from "../auth/auth";
+import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Button, Text, Group, Container } from "@mantine/core";
+import { getLoggedInUser, logoutUser } from "../auth/auth";
 
 const Navbar: React.FC = () => {
+  const [username, setUsername] = useState<string | null>(getLoggedInUser());
   const navigate = useNavigate();
-  const auth = isAuthenticated();
-  const username = getCurrentUser(); // Get the logged-in user
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUsername(getLoggedInUser());
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+    setUsername(null);
+    navigate("/login");
+  };
 
   return (
-    <Container>
-      <Flex justify="space-between" align="center" py="md">
-        {/* Home Button with Authentication Check */}
-        <Button
-          variant="subtle"
-          onClick={() => {
-            auth ? navigate("/resources") : alert("You need to log in first!");
-          }}
-        >
-          🚀 Home
-        </Button>
+    <header
+      style={{
+        backgroundColor: "#ffffff",
+        padding: "1rem 0",
+        borderBottom: "1px solid #ddd",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+        position: "sticky",
+        top: 0,
+        zIndex: 1000,
+      }}
+    >
+      <Container
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          maxWidth: "1200px",
+        }}
+      >
+        <Link to="/resources" style={{ textDecoration: "none", color: "#000" }}>
+          <Text size="xl" weight={700} style={{ fontFamily: "Poppins, sans-serif" }}>
+            MyApp
+          </Text>
+        </Link>
 
-        <Flex align="center" gap="md">
-          {/* Display Logged-in Username */}
-          {auth && <Text weight={500}>Welcome, {username}!</Text>}
-
-          {/* Conditional Login/Logout Buttons */}
-          {auth ? (
-            <Button
-              color="red"
-              onClick={() => {
-                logoutUser();
-                navigate("/");
-              }}
-            >
-              Logout
-            </Button>
+        <Group>
+          {username ? (
+            <>
+              <Text size="md" weight={500} style={{ marginRight: "1rem", color: "#333" }}>
+                Welcome, {username}
+              </Text>
+              <Button onClick={handleLogout} color="red" size="sm">
+                Logout
+              </Button>
+            </>
           ) : (
-            <Button onClick={() => navigate("/")}>Login</Button>
+            <Link to="/login">
+              <Button size="sm">Login</Button>
+            </Link>
           )}
-        </Flex>
-      </Flex>
-    </Container>
+        </Group>
+      </Container>
+    </header>
   );
 };
 
