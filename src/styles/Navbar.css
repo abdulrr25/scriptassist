@@ -1,0 +1,26 @@
+.navbar {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 100;
+  }
+  
+  .navbar-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .brand {
+    font-family: "Poppins", sans-serif;
+    font-size: 1.5rem;
+  }
+  
+  .username {
+    font-weight: 600;
+  }
+  
