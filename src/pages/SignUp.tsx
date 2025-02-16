@@ -63,7 +63,7 @@ const SignUp: React.FC = () => {
             }}
           >
             <Title order={2} align="center" style={{ marginBottom: "1rem", color: "#fff", fontWeight: 600 }}>
-              Create an Account
+            Sign Up and Get Started 🚀
             </Title>
 
             {error && <Alert color="red" style={{ marginBottom: "1rem" }}>{error}</Alert>}
@@ -81,7 +81,7 @@ const SignUp: React.FC = () => {
 
             <PasswordInput
               label="Password"
-              placeholder="Enter password"
+              placeholder="Enter Your Secret"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
