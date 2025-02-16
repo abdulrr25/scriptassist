@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
             }}
           >
             <Title order={2} align="center" style={{ marginBottom: "1rem", color: "#fff", fontWeight: 600 }}>
-            Sign in to continue
+            Access your account to continue
             </Title>
 
             {error && <Alert color="red" style={{ marginBottom: "1rem" }}>{error}</Alert>}
@@ -108,7 +108,7 @@ const LoginPage: React.FC = () => {
                   boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.3)",
                 }}
               >
-                Login
+                Let’s get started! 🚀
               </Button>
             </motion.div>
 
