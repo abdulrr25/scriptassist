@@ -67,7 +67,7 @@ const LoginPage: React.FC = () => {
             }}
           >
             <Title order={2} align="center" style={{ marginBottom: "1rem", color: "#fff", fontWeight: 600 }}>
-              Login
+            Sign in to continue
             </Title>
 
             {error && <Alert color="red" style={{ marginBottom: "1rem" }}>{error}</Alert>}
@@ -85,7 +85,7 @@ const LoginPage: React.FC = () => {
 
             <PasswordInput
               label="Password"
-              placeholder="Enter password"
+              placeholder="Enter Your Secret"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -113,7 +113,7 @@ const LoginPage: React.FC = () => {
             </motion.div>
 
             <Title order={6} align="center" mt="md" style={{ color: "#fff" }}>
-              Don't have an account? <Link to="/signup" style={{ color: "#3498db" }}>Sign Up</Link>
+            New here? Create an account! <Link to="/signup" style={{ color: "#3498db" }}>Sign Up</Link>
             </Title>
           </Card>
         </motion.div>
